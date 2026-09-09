@@ -29,7 +29,7 @@ func validStandalone() Config {
 func validCluster() Config {
 	return Config{
 		Driver: DriverPostgres, Mode: ModeCluster,
-		Nodes: []NodeConfig{{Host: "10.0.0.1", Port: 5432}, {Host: "10.0.0.2", Port: 5432}},
+		Nodes:    []NodeConfig{{Host: "10.0.0.1", Port: 5432}, {Host: "10.0.0.2", Port: 5432}},
 		Username: "app", Password: "pw", Database: "myapp",
 	}
 }
