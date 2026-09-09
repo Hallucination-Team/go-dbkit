@@ -37,3 +37,6 @@ go.work.sum
 >>>>>>> 1fd8dcd (chore: gitignore 排除 worktree 隔离目录)
 # SDD 工作树隔离目录
 .worktrees/
+
+# SDD 内部文档（不入远程库）
+docs/superpowers/
