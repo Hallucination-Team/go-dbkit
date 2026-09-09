@@ -188,7 +188,7 @@ DM 官方驱动以 vendored 方式维护在 [third_party/dm](third_party/dm)（i
 集成测试读取环境变量 `DBKIT_TEST_PG_HOST` / `DBKIT_TEST_PG_USER` / `DBKIT_TEST_PG_PASSWORD` /
 `DBKIT_TEST_PG_DATABASE` 与 `DBKIT_TEST_DM_HOST` / `DBKIT_TEST_DM_USER` / `DBKIT_TEST_DM_PASSWORD` /
 `DBKIT_TEST_DM_DATABASE`，未设置时使用 integration_test.go 中的默认值
-（容器网络场景 host 通常填宿主网关，如 192.0.2.1）。
+（容器网络场景 host 通常填宿主网关，即 Docker 默认网段网关，实际地址以部署环境为准）。
 
 ## License
 
