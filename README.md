@@ -124,8 +124,8 @@ sslmode、connect_timeout、search_path 等。
 
 | 参数 | 说明 |
 |---|---|
-| epSelector | 节点选择：0 顺序优先，1 随机均衡 |
-| loginMode | 主备优先级（如 0=主备都可连，4=仅主库） |
+| epSelector | 节点选择：0 均衡轮转（默认），1 顺序（头）优先 |
+| loginMode | 主备优先级：0=主库优先，1=仅主库，2=仅备库，3=备库优先，4=普通库优先（默认） |
 | switchTimes / switchInterval | 连接重试轮数 / 轮间隔 ms（默认 200） |
 | doSwitch | 连接失效行为（默认 1：返回 driver.ErrBadConn 由 database/sql 重试） |
 | driverReconnect | 连接失效时驱动自愈重连 |
@@ -137,7 +137,7 @@ sslmode、connect_timeout、search_path 等。
 ## 已知限制
 
 - DM DSN 不做 URL 反转义：username/password 不能含 `?`；option key 不能含 `&` `=` `?`；option value 不能含 `&` `?`
-- DM cluster 模式下 `database` 字段映射为驱动的 `schema` 连接参数（DM 实例内"库"即模式；options 显式配置 schema 时以 options 为准）
+- DM 各模式下 `database` 字段映射为驱动的 `schema` 连接参数（DM 实例内"库"即模式；options 显式配置 schema 时以 options 为准）
 - PG 密码按 libpq 规则自动转义（空格/引号/反斜杠），无需手动处理
 - PG options key 无字符校验：含空格的 key 会产出破损 DSN
 - `sql.Open` 的错误未包裹，裸露出且无 `dbkit:` 前缀
@@ -146,6 +146,7 @@ sslmode、connect_timeout、search_path 等。
 
     go build ./... && go test ./...                     # 单元测试（不连库）
     go vet $(go list ./... | grep -v /third_party/)     # 静态检查（third_party 豁免：官方源码固有告警）
+    gofmt -l . | grep -v '^third_party/'    # 格式检查（third_party 豁免：官方源码固有格式）
     go test -tags integration ./...                     # 集成测试（需本机 PG/DM 容器）
     tools/rehome_dm_driver.sh <官方驱动zip>              # 升级 DM 驱动后重跑（若为发行外壳 zip，传入内层 dm-go-driver.zip）
 
