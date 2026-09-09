@@ -17,9 +17,17 @@
 自定义重试、连接迁移、ORM、SQL Builder、自定义连接池。
 这些能力交给数据库驱动或数据库自身的 HA 机制。
 
-## 快速开始
+## 安装
 
 要求 Go 1.25+（pgx v5.11.0 的要求）。
+
+```bash
+go get github.com/Hallucination-Team/go-dbkit
+```
+
+安装即用：PG 驱动（pgx/v5）与 DM 驱动（third_party/dm）均已在库内，`dbkit.Open` 无需额外 import 驱动包。
+
+## 快速开始
 
 `config.yaml`（完整文件见 [examples/postgres-standalone](examples/postgres-standalone/config.yaml)，顶层扁平结构）：
 
@@ -148,7 +156,34 @@ sslmode、connect_timeout、search_path 等。
     go vet $(go list ./... | grep -v /third_party/)     # 静态检查（third_party 豁免：官方源码固有告警）
     gofmt -l . | grep -v '^third_party/'    # 格式检查（third_party 豁免：官方源码固有格式）
     go test -tags integration ./...                     # 集成测试（需本机 PG/DM 容器）
-    tools/rehome_dm_driver.sh <官方驱动zip>              # 升级 DM 驱动后重跑（若为发行外壳 zip，传入内层 dm-go-driver.zip）
+
+### 升级 DM 驱动（re-home 脚本）
+
+DM 官方驱动以 vendored 方式维护在 [third_party/dm](third_party/dm)（import 改写为
+`github.com/Hallucination-Team/go-dbkit/third_party/dm/*`，并移除其自带 go.mod/go.sum）。
+官方发布新版驱动后，按以下步骤升级：
+
+1. **获取官方驱动 zip**：从达梦官方发布包（安装介质）中取 Go 驱动压缩包。注意发行包常为
+   外壳 zip（内含 `go/dm-go-driver.zip`、gorm 方言包等），脚本需传入**内层**的
+   `dm-go-driver.zip`（其顶层为 `dm/` 目录，含 `go.mod`(module dm)、源码、LICENSE）。
+2. **执行脚本**（幂等：自动清理旧的 third_party/dm 后重建）：
+
+   ```bash
+   chmod +x tools/rehome_dm_driver.sh
+   tools/rehome_dm_driver.sh /path/to/dm-go-driver.zip
+   ```
+
+   脚本会：解压 → 重写全部 `dm/*` import 为本库路径 → 移除其 go.mod/go.sum →
+   保留官方 LICENSE/CHANGELOG.md/VERSION → 校验无残留 import，任一环节失败即报错退出。
+3. **收尾验证与提交**：
+
+   ```bash
+   go mod tidy && go build ./... && go test ./...
+   git add third_party tools/rehome_dm_driver.sh go.mod go.sum
+   git commit   # 建议注明官方驱动版本号，见 third_party/dm/VERSION
+   ```
+
+升级后新驱动是否改变保留键/禁则行为，重跑 `go test ./...` 与集成测试确认。
 
 集成测试读取环境变量 `DBKIT_TEST_PG_HOST` / `DBKIT_TEST_PG_USER` / `DBKIT_TEST_PG_PASSWORD` /
 `DBKIT_TEST_PG_DATABASE` 与 `DBKIT_TEST_DM_HOST` / `DBKIT_TEST_DM_USER` / `DBKIT_TEST_DM_PASSWORD` /
