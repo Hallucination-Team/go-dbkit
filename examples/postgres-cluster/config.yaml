@@ -1,0 +1,17 @@
+driver: postgres
+mode: cluster
+
+nodes:
+  - host: 127.0.0.1
+    port: 5432
+  - host: 127.0.0.1
+    port: 59999   # demo of node traversal: pgx skips unreachable nodes
+
+options:
+  sslmode: disable
+  target_session_attrs: read-write
+  connect_timeout: "3"
+
+username: app_user
+password: "your_password"
+database: app_db

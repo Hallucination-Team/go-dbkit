@@ -1,0 +1,17 @@
+driver: dm
+mode: cluster
+
+nodes:
+  - host: 127.0.0.1
+    port: 25999   # demo of node traversal: the driver skips unreachable nodes
+  - host: 127.0.0.1
+    port: 25236
+
+options:
+  epSelector: "0"
+  switchTimes: "2"
+  switchInterval: "200"
+
+username: SYSDBA
+password: "SYSDBA001"
+database: SYSDBA

@@ -1,0 +1,13 @@
+driver: postgres
+mode: standalone
+
+host: 127.0.0.1
+port: 5432
+
+options:
+  sslmode: disable
+  target_session_attrs: read-write
+
+username: app_user
+password: "your_password"
+database: app_db

@@ -1,0 +1,13 @@
+driver: dm
+mode: standalone
+
+host: 127.0.0.1
+port: 25236
+
+options:
+  epSelector: "0"
+  switchTimes: "3"
+
+username: SYSDBA
+password: "SYSDBA001"
+database: SYSDBA
